@@ -4,6 +4,7 @@ from highs import highs_var
 from sudoku import Sudoku
 from sudokuVariables import SudokuVariables
 import numpy as np
+from typing import cast
 
 def solve(sudoku: Sudoku):
     problem = highspy.Highs
@@ -19,12 +20,9 @@ def solve(sudoku: Sudoku):
     # One value per entry
     for row in range(1, size+1):
         for col in range(1, size+1):
-            variables_in_constraint = [variables[row,col,val] for val in range(1, size+1)]
-            multipliers = [1 for m in range(0, size)]
+            variables_in_constraint: list[highs_var] = [cast(highs_var, variables[row, col, val]) for val in range(1, size+1)]
+            multipliers: list[float] = [1.0 for m in range(0, size)]
             add_constraint(problem, variables_in_constraint, multipliers, 1, 1)
-    
-    # 
-
 
 def add_variables(problem: highspy.Highs, size: int, variables: SudokuVariables):
     for row in range(1, size+1):
