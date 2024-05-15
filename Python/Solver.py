@@ -38,6 +38,8 @@ def solve(sudoku: Sudoku):
             multipliers3: list[float] = [1.0 for m in range(0, size)]
             add_constraint(problem, variables_in_constraint3, multipliers3, 1, 1)
 
+    problem.run()
+
 def add_variables(problem: highspy.Highs, size: int, variables: SudokuVariables):
     for row in range(1, size+1):
         for col in range(1, size+1):
