@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class Sudoku:
@@ -15,8 +15,10 @@ class Sudoku:
             assert matrix is not None
             self.matrix = matrix
 
-    def __getitem__(self, row: int, col: int) -> Optional[int]:
+    def __getitem__(self, rowCol: Tuple[int, int]) -> Optional[int]:
+        row, col = rowCol
         return self.matrix[row-1][col-1]
 
-    def __setitem__(self, row: int, col: int, value: int):
+    def __setitem__(self, rowColVal: Tuple[int, int], value: int):
+        row, col = rowColVal
         self.matrix[row-1][col-1] = value
