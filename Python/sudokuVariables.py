@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, cast
 
 from ortools.linear_solver.python import model_builder
 from ortools.linear_solver.python.model_builder import Model, Solver, Variable
@@ -11,7 +11,7 @@ class SudokuVariables:
     def add(self, var, row: int, col: int, val: int):
         self.variables[row-1][col-1][val-1] = var
 
-    def __getitem__(self, rowColVal: Tuple[int, int, int]) -> Optional[Variable]:
+    def __getitem__(self, rowColVal: Tuple[int, int, int]) -> Variable:
         row, col, val = rowColVal
-        return self.variables[row-1][col-1][val-1]
+        return cast(Variable, self.variables[row-1][col-1][val-1])
                     
