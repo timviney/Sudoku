@@ -1,21 +1,21 @@
 from sudoku import Sudoku
 
 Problem1 = Sudoku([
-    [ 2  ,None, 9  ,None,None,None, 6  ,None,None],
+    [ 2  , 0  , 9  , 0  , 0  , 0  , 6  , 0  , 0  ],
 
-    [None, 4  ,None, 8  , 7  ,None,None, 1  , 2  ],
+    [ 0  , 4  , 0  , 8  , 7  , 0  , 0  , 1  , 2  ],
 
-    [ 8  ,None,None,None, 1  , 9  ,None, 4  ,None],
+    [ 8  , 0  , 0  , 0  , 1  , 9  , 0  , 4  , 0  ],
 
-    [None, 3  ,None, 7  ,None,None, 8  ,None, 1  ],
+    [ 0  , 3  , 0  , 7  , 0  , 0  , 8  , 0  , 1  ],
 
-    [None, 6  , 5  ,None,None, 8  ,None, 3  ,None],
+    [ 0  , 6  , 5  , 0  , 0  , 8  , 0  , 3  , 0  ],
 
-    [ 1  ,None,None,None, 3  ,None,None,None, 7  ],
+    [ 1  , 0  , 0  , 0  , 3  , 0  , 0  , 0  , 7  ],
 
-    [None,None,None, 6  , 5  ,None, 7  ,None, 9  ],
+    [ 0  , 0  , 0  , 6  , 5  , 0  , 7  , 0  , 9  ],
 
-    [ 6  ,None, 4  ,None,None,None,None, 2  ,None],
+    [ 6  , 0  , 4  , 0  , 0  , 0  , 0  , 2  , 0  ],
 
-    [None, 8  ,None, 3  ,None, 1  , 4  , 5  ,None],
+    [ 0  , 8  , 0  , 3  , 0  , 1  , 4  , 5  , 0  ],
 ])
