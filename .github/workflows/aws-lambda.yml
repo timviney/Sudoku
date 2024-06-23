@@ -16,12 +16,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.12'
+          python-version: '3.12'  # Specify your Python version
+
+# need to install requirements later
 
       - name: Zip Lambda function
         run: |
           cd Python
-          zip -r ../lambda_function.zip .
+          zip -r ../lambda_function.zip *
           cd ..
 
       - name: Upload Lambda function to AWS
@@ -31,4 +33,3 @@ jobs:
           AWS_REGION: eu-north-1
         run: |
           aws lambda update-function-code --function-name Sudoku --zip-file fileb://lambda_function.zip
-
