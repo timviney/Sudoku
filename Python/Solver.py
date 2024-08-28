@@ -20,9 +20,16 @@ def solve(sudoku: Sudoku):
     # One value per entry
     for row in range(1, size+1):
         for col in range(1, size+1):
-            variables_in_constraint: list[Variable] = [variables[row, col, val] for val in range(1, size+1)]
-            multipliers: list[float] = [1.0 for m in range(0, size)]
-            add_constraint(model, variables_in_constraint, multipliers, 1, 1)
+            if sudoku[row, col] == 0:
+                # If the cell is empty, allow any value from 1 to size
+                variables_in_constraint: list[Variable] = [variables[row, col, val] for val in range(1, size + 1)]
+                multipliers: list[float] = [1.0 for m in range(0, size)]
+                add_constraint(model, variables_in_constraint, multipliers, 1, 1)
+            else:
+                # If the cell has a predefined value, enforce that value
+                predefined_val = sudoku[row, col]
+                variable = variables[row, col, predefined_val]
+                add_constraint(model, [variable], [1.0], 1, 1)
     
     # Each value once per col
     for row in range(1, size+1):
@@ -48,15 +55,19 @@ def solve(sudoku: Sudoku):
                 add_constraint(model, variables_in_constraint4, multipliers4, 1, 1)
 
     solver: Solver = Solver("HiGHS")
-    solver.solve(model)
+    try:
+        solver.solve(model)
     
-    for row in range(1, size+1):
-        for col in range(1, size+1):
-            for val in range(1, size+1):
-                variable = variables[row, col, val]
-                binVal: np.double = solver.value(cast(Variable, variable))
-                if (binVal == 1):
-                    sudoku[row, col] = val
+        for row in range(1, size+1):
+            for col in range(1, size+1):
+                for val in range(1, size+1):
+                    variable = variables[row, col, val]
+                    binVal: np.double = solver.value(cast(Variable, variable))
+                    if (binVal == 1):
+                        sudoku[row, col] = val
+
+    except:
+        raise InvalidSudokuError("Invalid Sudoku grid")
     
 def add_variables(model: Model, size: int, variables: SudokuVariables):
     for row in range(1, size+1):
@@ -77,3 +88,10 @@ def add_constraint(model: Model, variables: list[Variable],
 
     model.add(model_builder.LinearExpr.weighted_sum(variables, multipliers) <= max)
     model.add(model_builder.LinearExpr.weighted_sum(variables, multipliers) >= min) # type: ignore
+
+class InvalidSudokuError(Exception):
+    """Exception raised for errors in the Sudoku grid."""
+    
+    def __init__(self, message="Invalid Sudoku grid"):
+        self.message = message
+        super().__init__(self.message)
