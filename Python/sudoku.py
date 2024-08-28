@@ -22,3 +22,15 @@ class Sudoku:
     def __setitem__(self, rowColVal: Tuple[int, int], value: int):
         row, col = rowColVal
         self.matrix[row-1][col-1] = value
+    
+    def __eq__(self, other):
+        if (not isinstance(other, Sudoku)) or len(self.matrix) != len(other.matrix) or len(self.matrix[0]) != len(other.matrix[0]):
+            return False
+        for row in range(self.size):
+            for col in range(self.size):
+                if (self.matrix[row][col] != other.matrix[row][col]): return False
+        return True
+        
+
+    def __repr__(self):
+        return f"Sudoku(values={self.matrix})"

@@ -1,5 +1,5 @@
 from sudoku import Sudoku
-from sudokuVariables import SudokuVariables
+from sudoku_variables import SudokuVariables
 import numpy as np
 from typing import cast
 from ortools.linear_solver.python import model_builder
