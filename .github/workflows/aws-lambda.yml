@@ -18,21 +18,41 @@ jobs:
         with:
           python-version: '3.12'
 
-# now all done manually
-#      - name: Install dependencies
-#        run: |
-#          python -m venv .venv
-#          source .venv/bin/activate
-#          cd Python
-#          pip install --target=Python -r requirements.txt
-#          cd ..
-
 # current have package issues, will investigate later          
 #      - name : Run tests 
 #        run : |
 #          pip install pytest
 #          pytest
-        
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: eu-north-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Build the Docker image
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: 905418195783.dkr.ecr.eu-north-1.amazonaws.com
+          ECR_REPOSITORY: python-ecr/sudoku-container
+          IMAGE_TAG: latest
+        run: |
+          # Build the Docker image
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          # Push the Docker image to ECR
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # Optionally, you can add a step to verify the image has been pushed
+      - name: Verify Image Pushed
+        run: |
+          echo "Listing images in ECR repository:"
+          aws ecr describe-images --repository-name python-ecr/sudoku-container --region eu-north-1
+          
       - name: Zip Lambda function
         run: |
           cd Python
