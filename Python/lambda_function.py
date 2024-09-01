@@ -1,5 +1,5 @@
 import json
-import solver
+import Python.sudoku_solver as sudoku_solver
 from sudoku import Sudoku
 
 def lambda_handler(event, context):
@@ -19,7 +19,7 @@ def solve_matrix(body):
     matrix = body.get('matrix', [[]])
 
     sudoku = Sudoku(matrix)
-    solver.solve(sudoku)
+    sudoku_solver.solve(sudoku)
     
     return {
         'statusCode': 200,
