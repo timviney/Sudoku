@@ -34,7 +34,7 @@ jobs:
           pip install --target=python -r requirements.txt
 
           # Add the application code to the deployment package
-          cp -r * python_tmp/
+          cp -r * Python/
 
           # Zip the entire content of the python directory
           cd python_tmp
