@@ -59,31 +59,34 @@ jobs:
 
       - name: Prepare and publish a Lambda Layer for ortools
         run: |
+          # Capture the base directory
+          BASE_DIR=$(pwd)
+          
           # Create a directory specifically for the ortools package and its dependencies
-          mkdir -p ortools_deps/python/lib/python3.12/site-packages
+          mkdir -p $BASE_DIR/ortools_deps/python/lib/python3.12/site-packages  # Adjust Python version as needed
           
           # Create a virtual environment outside of the packaging directory
-          python -m venv ortools_venv
-          source ortools_venv/bin/activate
+          python -m venv $BASE_DIR/ortools_venv
+          source $BASE_DIR/ortools_venv/bin/activate
           
-          # Install ortools into the targeted directory within the layer packaging structure
-          pip install -r ../Python/requirements-ortools.txt --target=ortools_deps/python/lib/python3.12/site-packages
+          # Ensure the requirements file path is correctly specified from the base directory
+          pip install --target=$BASE_DIR/ortools_deps/python/lib/python3.12/site-packages -r $BASE_DIR/Python/requirements-ortools.txt
           
           # Deactivate the virtual environment
           deactivate
           
-          # Navigate to the ortools_deps directory
-          cd ortools_deps
+          # Navigate to the ortools_deps directory to start the zipping process
+          cd $BASE_DIR/ortools_deps
           
           # Zip only the necessary directory structure that should go into the Lambda Layer
-          zip -r ../ortools_layer.zip python
+          zip -r $BASE_DIR/ortools_layer.zip python
           
-          # Return to the root directory
-          cd ..
+          # Change to the base directory before using AWS CLI
+          cd $BASE_DIR
           
           # Publish the zipped package as a Lambda Layer
           aws lambda publish-layer-version --layer-name ortools-layer --zip-file fileb://ortools_layer.zip --compatible-runtimes python3.12
-        
+   
       - name: Update Lambda function configuration to use the Layer
         run: |
           LAYER_VERSION_ARN=$(aws lambda list-layer-versions --layer-name ortools-layer --query 'LayerVersions[0].LayerVersionArn' --output text)
