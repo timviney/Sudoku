@@ -4,27 +4,30 @@ import sudoku_solver
 from sudoku import Sudoku
 
 def lambda_handler(event, context):
-    # Parse the request body
-    body = json.loads(event['body'])
+    b = run(event)
+
+    return b.AsJson()
     
-    method = body.get('method', [])
-
-    if method == 'solveMatrix': solve_matrix(body)
-    else:
-        return {
-            'statusCode': 405,
-            'body': json.dumps('Method Not Allowed')
-        }
-
-def solve_matrix(body):
+def run(event) -> JsonResult:
     try:
-        matrix = body.get('matrix', [[]])
-
-        sudoku = Sudoku(matrix)
-        sudoku_solver.solve(sudoku)
+        # Parse the request body
+        body = json.loads(event['body'])
         
-        return JsonResult(True, sudoku)
-    
+        method = body.get('method', [])
+
+        if method == 'solveMatrix': return solve_matrix(body)
+        # Can fill in more methods here
+        else:
+            return JsonResult(False, 'Method Not Allowed')
+        
     except Exception as e:
         return JsonResult(False, e)
+
+def solve_matrix(body) -> JsonResult:
+    matrix = body.get('matrix', [[]])
+
+    sudoku = Sudoku(matrix)
+    sudoku_solver.solve(sudoku)
+    
+    return JsonResult(True, sudoku)
 

@@ -10,6 +10,6 @@ class JsonResult:
             'statusCode': 200 if self.Success else 400,
             'success': self.Success,
             'result': json.dumps(self.Result),
-            'error': json.dumps(self.Error)
+            'error': str(self.Error)
         }
     
