@@ -1,5 +1,5 @@
 import json
-import Python.sudoku_solver as sudoku_solver
+import sudoku_solver
 from sudoku import Sudoku
 
 def lambda_handler(event, context):
