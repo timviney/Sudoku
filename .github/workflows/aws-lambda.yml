@@ -24,7 +24,7 @@ jobs:
           source .venv/bin/activate
           cd Python
           pip install -r requirements.txt
-          cd..
+          cd ..
 
       - name: Zip Lambda function
         run: |
