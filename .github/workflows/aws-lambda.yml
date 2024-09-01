@@ -16,14 +16,29 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.12'  # Specify your Python version
+          python-version: '3.12'
 
-# need to install requirements later
-
-      - name: Zip Lambda function
+      - name: Install dependencies
         run: |
-          cd Python
-          zip -r ../lambda_function.zip *
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Create deployment package
+        run: |
+          # Ensure the environment is activated
+          source .venv/bin/activate
+
+          # Install dependencies into a temporary directory
+          mkdir -p python_tmp
+          pip install --target=python -r requirements.txt
+
+          # Add the application code to the deployment package
+          cp -r * python_tmp/
+
+          # Zip the entire content of the python directory
+          cd python_tmp
+          zip -r ../lambda_function.zip .
           cd ..
 
       - name: Upload Lambda function to AWS
