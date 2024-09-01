@@ -24,21 +24,10 @@ jobs:
           source .venv/bin/activate
           pip install -r requirements.txt
 
-      - name: Create deployment package
+      - name: Zip Lambda function
         run: |
-          # Ensure the environment is activated
-          source .venv/bin/activate
-
-          # Install dependencies into a temporary directory
-          mkdir -p python_tmp
-          pip install --target=python -r requirements.txt
-
-          # Add the application code to the deployment package
-          cp -r * python_tmp/
-
-          # Zip the entire content of the python directory
-          cd python_tmp
-          zip -r ../lambda_function.zip .
+          cd Python
+          zip -r ../lambda_function.zip *
           cd ..
 
       - name: Upload Lambda function to AWS
