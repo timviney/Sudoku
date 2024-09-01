@@ -23,19 +23,36 @@ jobs:
           python -m venv .venv
           source .venv/bin/activate
           cd Python
-          pip install -r requirements.txt
+          pip install --target=Python -r requirements.txt
           cd ..
 
+# current have package issues, will investigate later          
+#      - name : Run tests 
+#        run : |
+#          pip install pytest
+#          pytest
+        
       - name: Zip Lambda function
         run: |
           cd Python
           zip -r ../lambda_function.zip *
           cd ..
 
-      - name: Upload Lambda function to AWS
+      - name: Upload Lambda package to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-north-1
         run: |
-          aws lambda update-function-code --function-name Sudoku --zip-file fileb://lambda_function.zip
+          aws s3 cp lambda_function.zip s3://sudoku-repo/lambda_function.zip
+
+      - name: Update Lambda function with S3 package
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: eu-north-1
+        run: |
+          aws lambda update-function-code \
+            --function-name Sudoku \
+            --s3-bucket sudoku-repo \
+            --s3-key lambda_function.zip
