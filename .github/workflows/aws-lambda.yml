@@ -23,9 +23,12 @@ jobs:
           python -m venv .venv
           source .venv/bin/activate
           cd Python
-          pip install -r requirements.txt
+          pip install --target=Python -r requirements.txt
           cd ..
-
+          
+      - name : Run tests 
+        run : pytest
+        
       - name: Zip Lambda function
         run: |
           cd Python
