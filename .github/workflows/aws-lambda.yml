@@ -59,16 +59,27 @@ jobs:
 
       - name: Prepare and publish a Lambda Layer for ortools
         run: |
-          mkdir layer
-          cd layer
+          # Create a distinct directory for the ortools layer packaging
+          mkdir -p ortools_layer_pack/python/lib/python3.12/site-packages
+          cd ortools_layer_pack
           python -m venv layer-env
           source layer-env/bin/activate
-          mkdir ortools_py
-          pip install -r ../Python/requirements-ortools.txt
+          
+          # Install ortools and its dependencies into the target directory within the layer package
+          pip install -r ../Python/requirements-ortools.txt --target=python/lib/python3.12/site-packages
+          
+          # Exit the virtual environment
           deactivate
-          zip -r ortools_layer.zip ortools_py
+          
+          # Move back to the root directory where ortools_layer_pack is located
+          cd ..
+          
+          # Zip the entire ortools_layer_pack directory, ensuring the structure is preserved
+          zip -r ortools_layer.zip ortools_layer_pack/
+          
+          # Publish the layer to AWS Lambda with the appropriate runtime compatibility
           aws lambda publish-layer-version --layer-name ortools-layer --zip-file fileb://ortools_layer.zip --compatible-runtimes python3.12
-      
+            
       - name: Update Lambda function configuration to use the Layer
         run: |
           LAYER_VERSION_ARN=$(aws lambda list-layer-versions --layer-name ortools-layer --query 'LayerVersions[0].LayerVersionArn' --output text)
