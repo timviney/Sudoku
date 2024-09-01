@@ -27,7 +27,10 @@ jobs:
           cd ..
           
       - name : Run tests 
-        run : pytest
+        run : |
+          cd Python
+          pytest
+          cd ..
         
       - name: Zip Lambda function
         run: |
