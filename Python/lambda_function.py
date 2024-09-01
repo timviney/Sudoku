@@ -1,4 +1,5 @@
 import json
+from json_result import JsonResult
 import sudoku_solver
 from sudoku import Sudoku
 
@@ -16,13 +17,14 @@ def lambda_handler(event, context):
         }
 
 def solve_matrix(body):
-    matrix = body.get('matrix', [[]])
+    try:
+        matrix = body.get('matrix', [[]])
 
-    sudoku = Sudoku(matrix)
-    sudoku_solver.solve(sudoku)
+        sudoku = Sudoku(matrix)
+        sudoku_solver.solve(sudoku)
+        
+        return JsonResult(True, sudoku)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(sudoku.matrix)
-    }
+    except Exception as e:
+        return JsonResult(False, e)
 
