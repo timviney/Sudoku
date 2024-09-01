@@ -64,7 +64,7 @@ jobs:
           python -m venv layer-env
           source layer-env/bin/activate
           mkdir ortools_py
-          pip install ortools -t python/lib/python3.12/site-packages/
+          pip install -r Python/requirements.ortools.txt
           deactivate
           zip -r ortools_layer.zip ortools_py
           aws lambda publish-layer-version --layer-name ortools-layer --zip-file fileb://ortools_layer.zip --compatible-runtimes python3.12
