@@ -4,9 +4,8 @@ import sudoku_solver
 from sudoku import Sudoku
 
 def lambda_handler(event, context):
-    b = run(event)
-
-    return b.AsJson()
+    result = run(event)
+    return result.AsJson()
     
 def run(event) -> JsonResult:
     try:
