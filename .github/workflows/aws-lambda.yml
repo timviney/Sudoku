@@ -29,17 +29,11 @@ jobs:
           # Ensure the environment is activated
           source .venv/bin/activate
 
-          # Install dependencies into a temporary directory
-          mkdir -p python_tmp
+          # Install dependencies
           pip install --target=python -r requirements.txt
 
-          # Add the application code to the deployment package
-          cp -r * Python/
-
           # Zip the entire content of the python directory
-          cd python_tmp
           zip -r ../lambda_function.zip .
-          cd ..
 
       - name: Upload Lambda function to AWS
         env:
