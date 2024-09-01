@@ -18,13 +18,14 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          cd Python
-          pip install --target=Python -r requirements.txt
-          cd ..
+# now all done manually
+#      - name: Install dependencies
+#        run: |
+#          python -m venv .venv
+#          source .venv/bin/activate
+#          cd Python
+#          pip install --target=Python -r requirements.txt
+#          cd ..
 
 # current have package issues, will investigate later          
 #      - name : Run tests 
@@ -38,57 +39,10 @@ jobs:
           zip -r ../lambda_function.zip *
           cd ..
 
-      - name: Upload Lambda package to S3
+      - name: Upload Lambda function to AWS
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-north-1
         run: |
-          aws s3 cp lambda_function.zip s3://sudoku-repo/lambda_function.zip
-
-      - name: Update Lambda function with S3 package
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: eu-north-1
-        run: |
-          aws lambda update-function-code \
-            --function-name Sudoku \
-            --s3-bucket sudoku-repo \
-            --s3-key lambda_function.zip
-
-      - name: Prepare and publish a Lambda Layer for ortools
-        run: |
-          # Capture the base directory
-          BASE_DIR=$(pwd)
-          
-          # Create a directory specifically for the ortools package and its dependencies
-          mkdir -p $BASE_DIR/ortools_deps/python/lib/python3.12/site-packages  # Adjust Python version as needed
-          
-          # Create a virtual environment outside of the packaging directory
-          python -m venv $BASE_DIR/ortools_venv
-          source $BASE_DIR/ortools_venv/bin/activate
-          
-          # Ensure the requirements file path is correctly specified from the base directory
-          pip install --target=$BASE_DIR/ortools_deps/python/lib/python3.12/site-packages -r $BASE_DIR/Python/requirements-ortools.txt
-          
-          # Deactivate the virtual environment
-          deactivate
-          
-          # Navigate to the ortools_deps directory to start the zipping process
-          cd $BASE_DIR/ortools_deps
-          
-          # Zip only the necessary directory structure that should go into the Lambda Layer
-          zip -r $BASE_DIR/ortools_layer.zip python
-          
-          # Change to the base directory before using AWS CLI
-          cd $BASE_DIR
-          
-          # Publish the zipped package as a Lambda Layer
-          aws lambda publish-layer-version --layer-name ortools-layer --zip-file fileb://ortools_layer.zip --compatible-runtimes python3.12
-   
-      - name: Update Lambda function configuration to use the Layer
-        run: |
-          LAYER_VERSION_ARN=$(aws lambda list-layer-versions --layer-name ortools-layer --query 'LayerVersions[0].LayerVersionArn' --output text)
-          aws lambda update-function-configuration --function-name Sudoku --layers $LAYER_VERSION_ARN
-
+          aws lambda update-function-code --function-name Sudoku --zip-file fileb://lambda_function.zip
