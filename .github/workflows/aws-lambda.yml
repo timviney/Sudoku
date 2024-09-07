@@ -52,17 +52,15 @@ jobs:
         run: |
           echo "Listing images in ECR repository:"
           aws ecr describe-images --repository-name python-ecr/sudoku-container --region eu-north-1
-          
-      - name: Zip Lambda function
-        run: |
-          cd Python
-          zip -r ../lambda_function.zip *
-          cd ..
 
-      - name: Upload Lambda function to AWS
+      # Update the Lambda function to use the new image
+      - name: Update Lambda function with new image
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: eu-north-1
+          ECR_REGISTRY: 905418195783.dkr.ecr.eu-north-1.amazonaws.com
+          ECR_REPOSITORY: python-ecr/sudoku-container
+          IMAGE_TAG: latest
         run: |
-          aws lambda update-function-code --function-name Sudoku --zip-file fileb://lambda_function.zip
+          # Update the Lambda function code with the new image URI
+          aws lambda update-function-code \
+            --function-name Sudoku-Backend \
+            --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
