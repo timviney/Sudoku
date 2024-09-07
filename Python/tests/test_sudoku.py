@@ -3,6 +3,7 @@ from sudoku import Sudoku
 from tests.helpers import problems
 import sudoku_solver
 
+
 def test_given_incomplete_grid_when_solver_runs_then_returns_correct_solution():
         problem1: Sudoku = problems.Problem1()
         sudoku_solver.solve(problem1)

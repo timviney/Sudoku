@@ -30,7 +30,12 @@ class Sudoku:
             for col in range(self.size):
                 if (self.matrix[row][col] != other.matrix[row][col]): return False
         return True
-        
 
     def __repr__(self):
         return f"Sudoku(values={self.matrix})"
+    
+    def to_dict(self) -> dict:
+        return {
+            'size': self.size,
+            'matrix': self.matrix
+        }

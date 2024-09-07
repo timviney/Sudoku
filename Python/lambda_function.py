@@ -8,13 +8,9 @@ def lambda_handler(event, context):
     return result.AsJson()
     
 def run(event) -> JsonResult:
-    try:
-        # Parse the request body
-        body = json.loads(event['body'])
-        
-        method = body.get('method', [])
-
-        if method == 'solveMatrix': return solve_matrix(body)
+    try:        
+        method = event['method']
+        if method == 'solveMatrix': return solve_matrix(event)
         # Can fill in more methods here
         else:
             return JsonResult(False, 'Method Not Allowed')
@@ -22,11 +18,11 @@ def run(event) -> JsonResult:
     except Exception as e:
         return JsonResult(False, e)
 
-def solve_matrix(body) -> JsonResult:
-    matrix = body.get('matrix', [[]])
+def solve_matrix(event) -> JsonResult:
+    matrix = event.get('matrix', [[]])
 
     sudoku = Sudoku(matrix)
     sudoku_solver.solve(sudoku)
     
-    return JsonResult(True, sudoku)
+    return JsonResult(True, sudoku.to_dict())
 

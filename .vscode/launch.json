@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Runner",
+            "name": "API Dummy",
             "type": "debugpy",
             "request": "launch",
-            "program": "Python/runner.py",
+            "program": "Python/api_dummy.py",
             "console": "integratedTerminal"
         }
     ]
