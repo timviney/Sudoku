@@ -11,7 +11,7 @@ class JsonResult:
         return {
             'statusCode': 200 if self.Success else 400,
             'success': self.Success,
-            'result': json.dumps(self.Result) if self.Result is not None else None,
+            'result': self.Result,
             'error': self._get_detailed_error_message(self.Error) if self.Error else None
         }
 
