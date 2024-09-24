@@ -8,8 +8,11 @@ class JsonResult:
         self.Error = None if success else result
 
     def AsJson(self):
-        errorFull = self._get_detailed_error_message(self.Error) if self.Error else None
-        errorSimple = str(self.Error)
+        hasError = self.Error != None
+        error = {
+                'message' : str(self.Error),
+                'full' : self._get_detailed_error_message(self.Error)
+            } if hasError else None
 
         return {
             'statusCode': 200 if self.Success else 400,
@@ -18,10 +21,7 @@ class JsonResult:
             },
             'success': self.Success,
             'result': self.Result,
-            'error': {
-                'message' : errorSimple,
-                'full' : errorFull
-            }
+            'error': error
         }
 
     def _get_detailed_error_message(self, error):
