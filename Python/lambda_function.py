@@ -11,6 +11,7 @@ def run(event) -> JsonResult:
     try:        
         method = event['method']
         if method == 'solveMatrix': return solve_matrix(event)
+        elif method == 'wakeUp': return JsonResult(True, "I'm awake!")
         # Can fill in more methods here
         else:
             return JsonResult(False, 'Method Not Allowed')
